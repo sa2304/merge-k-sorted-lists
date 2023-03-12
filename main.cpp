@@ -4,13 +4,23 @@
 
 using namespace std;
 
-#define APPEND(head, tail, val)           \
+#define APPEND(head, tail, node)          \
     if (tail) {                           \
-        (tail)->next = new ListNode(val); \
+        (tail)->next = node;              \
         (tail) = (tail)->next;            \
     } else {                              \
-        head = tail = new ListNode(val);  \
+        head = tail = node;               \
     }
+
+#define CONCAT(head, tail, node) \
+  if (tail) {                    \
+    tail->next = node;           \
+  } else {                       \
+    head = tail = node;          \
+  }                              \
+  while (tail->next) {           \
+    tail = tail->next;           \
+  }
 
 struct ListNode {
   int val;
@@ -34,25 +44,21 @@ class Solution {
     ListNode *result_head = nullptr;
     ListNode *result_tail = nullptr;
     while (l1 && l2) {
-      int minval;
       if (l1->val < l2->val) {
-        minval = l1->val;
+        APPEND(result_head, result_tail, l1);
         l1 = l1->next;
       } else {
-        minval = l2->val;
+        APPEND(result_head, result_tail, l2);
         l2 = l2->next;
       }
-      APPEND(result_head, result_tail, minval);
     }
 
-    while (l1) {
-      APPEND(result_head, result_tail, l1->val);
-      l1 = l1->next;
+    if (l1) {
+      CONCAT(result_head, result_tail, l1);
     }
 
-    while (l2) {
-      APPEND(result_head, result_tail, l2->val);
-      l2 = l2->next;
+    if (l2) {
+      CONCAT(result_head, result_tail, l2);
     }
 
     return result_head;
